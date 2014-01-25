@@ -1,0 +1,21 @@
+Sim -> Client
+    * Entity created ( ID )
+    * Entity destroyed ( ID )
+    * Entity updated ( ID )
+    * Command ( commad, args )
+
+Client -> Sim
+    * Command ( command, args )
+
+Asset -> Sim
+    * Asset added ( ID )
+    * Asset removed ( ID )
+    * Asset updated ( ID )
+    * Asset locked ( ID )
+    * Asset unlocked ( ID )
+
+Camera -> Sim
+    * Marker enter ( ID )
+    * Marker leave ( ID )
+    * Marker move ( ID, pose [worldspace] )
+
