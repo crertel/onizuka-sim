@@ -13,10 +13,10 @@ var markers = []
 var nextMarkerID = 0;
 
 function startAssetPub() {
-    var cameraAddress = "tcp://*"+":"+config.cameraServerPort;
+    var cameraAddress = "tcp://"+ config.cameraServerAddress + ":" +config.cameraServerPort;
     log.log("Start camera message publication at " + cameraAddress);
-    cameraPub = zmq.socket('pub');
-    cameraPub.bind(cameraAddress);
+    cameraPub = zmq.socket('push');
+    cameraPub.connect(cameraAddress);
     log.log("done.");
 
     setInterval(function () {

@@ -8,11 +8,12 @@ var log4js = require('log4js');
 var log = log4js.getLogger();
 
 
-log.setLevel('INFO');
+//log.setLevel('INFO');
 
 var messageDispatch = require('./messageDispatch');
 
 var assetSub;
+var cameraPull;
 var webServer;
 var expressWebServer;
 var monitorSocket;
@@ -56,11 +57,11 @@ function startAssetSub() {
 
     log.info("done.");
 };
-function startCameraSub() {
-    var cameraServerAddress = "tcp://" + config.cameraServerAddress + ":" + config.cameraServerPort;
-    cameraSub = zmq.socket('sub');
+function startCameraPull() {
+    var cameraServerAddress = "tcp://*:" + config.cameraServerPort;
+    cameraPull = zmq.socket('pull');
     log.info("Subscribed to camera server at %s", cameraServerAddress);
-    cameraSub.on('message', function(msg) {
+    cameraPull.on('message', function(msg) {
      try {
          var msgObject = JSON.parse(msg);
          log.debug('Received message: ');
@@ -72,8 +73,7 @@ function startCameraSub() {
      }
 
     });
-    cameraSub.subscribe('');
-    cameraSub.connect(cameraServerAddress);
+    cameraPull.bind(cameraServerAddress);
 
     log.info("done.");
 };
@@ -151,7 +151,7 @@ function init() {
     startMonitor();
 
     startAssetSub();
-    startCameraSub();
+    startCameraPull();
     
     process.on('SIGINT', shutdown);
     process.on("quit", shutdown);
