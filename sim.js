@@ -1,4 +1,6 @@
 var config = require("./config.js");
+
+var path = require('path');
 var express = require('express');
 var zmq = require('zmq');
 var sockjs = require("sockjs");
@@ -10,6 +12,11 @@ var assetSub;
 var webServer;
 var expressWebServer;
 var monitorSocket;
+
+function runScriptFromFile( filename ) {
+    var scriptPath = path.join(__dirname,"scripts",filename);
+    log.info("Running script %s", scriptPath );
+};
 
 function startAssetSub() {
     var assetServerAddress = "tcp://" + config.assetServerAddress + ":" + config.assetServerPort;
@@ -53,6 +60,12 @@ var operatorCommands = {
         conn.showMessages = false;
         }
     },
+
+    runScript: function (filename) {
+        return function (conn) {
+            runScriptFromFile(filename);
+        }
+    }
 };
 
 function startMonitor(){
