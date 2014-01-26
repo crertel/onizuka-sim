@@ -1,4 +1,4 @@
-var config = require("./config.js");
+var config = require("./camConfig.js");
 var zmq = require('zmq');
 var _ = require('lodash');
 var log4js = require('log4js');
@@ -12,15 +12,15 @@ var cameraPub;
 var markers = []
 var nextMarkerID = 0;
 
-function startAssetPub() {
-    var cameraAddress = "tcp://"+ config.cameraServerAddress + ":" +config.cameraServerPort;
-    log.log("Start camera message publication at " + cameraAddress);
+function startPub() {
+    var simAddress = "tcp://"+ config.simServerAddress + ":" +config.simCameraPort;
+    log.log("Start camera message publication at " + simAddress);
     cameraPub = zmq.socket('push');
-    cameraPub.connect(cameraAddress);
+    cameraPub.connect(simAddress);
     log.log("done.");
 
     setInterval(function () {
-        cameraPub.send('{"t":"hrt", "st":"dub", "d":"dub"}');
+        cameraPub.send('{"t":"cam", "st":"hrt", "d":{"id":"'+ config.ID+ '"}}');
     }, 1000);
 
     setInterval(function(){
@@ -61,14 +61,14 @@ function showConfig() {
 
 function init() {
     showConfig();
-    startAssetPub();
+    startPub();
     process.on('SIGINT', shutdown);
     process.on("quit", shutdown);
 };
 
 function shutdown() {
     log.warn("Shutting down...");
-    assetSub.close();
+    cameraPub.close();
 };
 
 init();

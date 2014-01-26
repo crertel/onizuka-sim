@@ -1,4 +1,4 @@
-var config = require("./config.js");
+var config = require("./simConfig.js");
 
 var path = require('path');
 var express = require('express');
@@ -8,7 +8,7 @@ var log4js = require('log4js');
 var log = log4js.getLogger();
 
 
-//log.setLevel('INFO');
+log.setLevel('WARN');
 
 var messageDispatch = require('./messageDispatch');
 
@@ -36,44 +36,32 @@ function broadcastOperators ( msg ) {
      }
 };
 
+function handleMessageText(msg) {
+     try {
+         var msgObject = JSON.parse(msg);
+         messageDispatch.dispatchMessage(msgObject);
+         broadcastOperators(msg);
+     } catch ( error ) {
+         log.warn('Received bad message: \n%s', msg.toString());
+     }
+}
+
 function startAssetSub() {
     var assetServerAddress = "tcp://" + config.assetServerAddress + ":" + config.assetServerPort;
     assetSub = zmq.socket('sub');
     log.info("Subscribed to asset server at %s", assetServerAddress);
-    assetSub.on('message', function(msg) {
-     try {
-         var msgObject = JSON.parse(msg);
-         log.debug('Received message: ');
-         log.debug( msgObject );
-         broadcastOperators(msgObject);
-         messageDispatch.dispatchMessage(msgObject);
-     } catch ( error ) {
-         log.warn('Received bad message: \n%s', msg.toString());
-     }
-
-    });
+    assetSub.on('message', handleMessageText);
     assetSub.subscribe('');
     assetSub.connect(assetServerAddress);
 
     log.info("done.");
 };
 function startCameraPull() {
-    var cameraServerAddress = "tcp://*:" + config.cameraServerPort;
+    var cameraClientAddress = "tcp://*:" + config.cameraListenPort;
     cameraPull = zmq.socket('pull');
-    log.info("Subscribed to camera server at %s", cameraServerAddress);
-    cameraPull.on('message', function(msg) {
-     try {
-         var msgObject = JSON.parse(msg);
-         log.debug('Received message: ');
-         log.debug( msgObject );
-         broadcastOperators(msgObject);
-         messageDispatch.dispatchMessage(msgObject);
-     } catch ( error ) {
-         log.warn('Received bad message: \n%s', msg.toString());
-     }
-
-    });
-    cameraPull.bind(cameraServerAddress);
+    log.info("Subscribed to camera server at %s", cameraClientAddress);
+    cameraPull.on('message', handleMessageText);
+    cameraPull.bind(cameraClientAddress);
 
     log.info("done.");
 };

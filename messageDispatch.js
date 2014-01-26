@@ -14,15 +14,10 @@ function handleAssetMessage( message ) {
     log.debug("Got asset message:\n%s", JSON.stringify(message) );
 };
 
-function handleHeartbeat( message ) {
-    log.debug("Got heartbeat message:\n%s", JSON.stringify(message) );
-};
-
 var dispatchers = {
     cam: handleCameraMessage,
     ass: handleAssetMessage,
     clt: handleClientMessage,
-    hrt: handleHeartbeat
 };
 
 function dispatchMessage( message ) {
