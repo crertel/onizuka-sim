@@ -6,7 +6,11 @@ var zmq = require('zmq');
 var sockjs = require("sockjs");
 var log4js = require('log4js');
 var log = log4js.getLogger();
-log.setLevel('INFO');
+
+
+//log.setLevel('INFO');
+
+var messageDispatch = require('./messageDispatch');
 
 var assetSub;
 var webServer;
@@ -18,6 +22,19 @@ function runScriptFromFile( filename ) {
     log.info("Running script %s", scriptPath );
 };
 
+function broadcastOperators ( msg ) {
+     try {
+         // notify operators
+         operators.forEach( function(conn) {
+             if (conn.showMessages) {
+                 conn.write(msg);
+             }
+         });
+     } catch (error) {
+         log.warn("Unable to send to operator: ", error.toString());
+     }
+};
+
 function startAssetSub() {
     var assetServerAddress = "tcp://" + config.assetServerAddress + ":" + config.assetServerPort;
     assetSub = zmq.socket('sub');
@@ -25,18 +42,10 @@ function startAssetSub() {
     assetSub.on('message', function(msg) {
      try {
          var msgObject = JSON.parse(msg);
-         var msgObjectString = JSON.stringify(msgObject);
-         try {
-             operators.forEach( function(conn) {
-                 if (conn.showMessages) {
-                     conn.write(msgObjectString);
-                 }
-             });
-         } catch (error) {
-             log.warn("Unable to send to operator: ", error.toString());
-         }
          log.debug('Received message: ');
-         log.debug( msgObjectString );
+         log.debug( msgObject );
+         broadcastOperators(msgObject);
+         messageDispatch.dispatchMessage(msgObject);
      } catch ( error ) {
          log.warn('Received bad message: \n%s', msg.toString());
      }
@@ -44,6 +53,27 @@ function startAssetSub() {
     });
     assetSub.subscribe('');
     assetSub.connect(assetServerAddress);
+
+    log.info("done.");
+};
+function startCameraSub() {
+    var cameraServerAddress = "tcp://" + config.cameraServerAddress + ":" + config.cameraServerPort;
+    cameraSub = zmq.socket('sub');
+    log.info("Subscribed to camera server at %s", cameraServerAddress);
+    cameraSub.on('message', function(msg) {
+     try {
+         var msgObject = JSON.parse(msg);
+         log.debug('Received message: ');
+         log.debug( msgObject );
+         broadcastOperators(msgObject);
+         messageDispatch.dispatchMessage(msgObject);
+     } catch ( error ) {
+         log.warn('Received bad message: \n%s', msg.toString());
+     }
+
+    });
+    cameraSub.subscribe('');
+    cameraSub.connect(cameraServerAddress);
 
     log.info("done.");
 };
@@ -119,7 +149,10 @@ function init() {
     showConfig();
     startWeb();
     startMonitor();
+
     startAssetSub();
+    startCameraSub();
+    
     process.on('SIGINT', shutdown);
     process.on("quit", shutdown);
 };
