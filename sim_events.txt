@@ -1,21 +1,44 @@
 Sim -> Client
+    * Heartbeat
+        { "t": "sim", "st":"dub", "d": { "id" : <whatever> } }
     * Entity created ( ID )
+        { "t": "sim", "st":"dub", "d": { "id" : <whatever> } }
     * Entity destroyed ( ID )
+        { "t": "sim", "st":"dub", "d": { "id" : <whatever> } }
     * Entity updated ( ID )
+        { "t": "sim", "st":"dub", "d": { "id" : <whatever> } }
+    * Entity sync 
+        { "t": "sim", "st":"syn", "d": {"id": <whatever, "ents": [ bunch of entities ] } }
     * Command ( commad, args )
+        { "t": "sim", "st":"com", "d": { "id" : <whatever>, "com": <whatever>, "args": [] } }
 
 Client -> Sim
+    * Heartbeat
+        { "t": "clt", "st":"dub", "d": { "id" : <whatever> } }
     * Command ( command, args )
+        { "t": "clt", "st":"com", "d": { "id" : <whatever>, "com":<whatever>, "args": [] } }
 
 Asset -> Sim
+    * Heartbeat
+        { "t": "ass", "st":"hrt", "d": { "id" : <whatever> } }
     * Asset added ( ID )
+        { "t": "ass", "st":"add", "d": { "id" : <whatever>, "aid": <whatever> } }
     * Asset removed ( ID )
+        { "t": "ass", "st":"rem", "d": { "id" : <whatever>, "aid": <whatever> } }
     * Asset updated ( ID )
+        { "t": "ass", "st":"upd", "d": { "id" : <whatever>, "aid": <whatever> } }
     * Asset locked ( ID )
+        { "t": "ass", "st":"lok", "d": { "id" : <whatever>, "aid": <whatever> } }
     * Asset unlocked ( ID )
+        { "t": "ass", "st":"unl", "d": { "id" : <whatever>, "aid": <whatever> } }
 
 Camera -> Sim
+    * Heartbeat
+        { "t": "cam", "st":"hrt", "d": { "id" : <whatever> } }
     * Marker enter ( ID )
+        { "d":"cam", "st":"ent", "d": { "id": <whatever>, "mid": <whatever> } }
     * Marker leave ( ID )
+        { "d":"cam", "st":"ext", "d": { "id": <whatever>, "mid": <whatever> } }
     * Marker move ( ID, pose [worldspace] )
+        { "d":"cam", "st":"upd", "d": { "id": <whatever>, "mid": <whatever>, "pos" : [x,y,z], "ort":[x,y,z,w] } }
 
