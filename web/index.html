@@ -65,11 +65,37 @@
             };
 
             var $cli = $("#cli");           
+            var enteredCommands = [];
+            var commandIndex = 0;
+
 
             $cli.on("keyup", function(e) {
+                // up arrow
+                if (e.keyCode == '38') {
+                    commandIndex++;
+                    if (commandIndex >= enteredCommands.length) {
+                        commandIndex = 0;
+                    }
+                    $cli.val( enteredCommands[commandIndex]);              
+                }
+                // down arrow
+                if (e.keyCode == '40') {
+                    commandIndex--;
+                    if (commandIndex < 0) {
+                        commandIndex = enteredCommands.length-1;
+                    }
+                    $cli.val( enteredCommands[commandIndex]);              
+                }
+                // enter
                 if (e.keyCode == '13') {
-                    doInput($cli.val().trim());
+                    var command = $cli.val().trim();
+                    doInput(command);
                     $cli.val("");
+
+                    if (command.length != 0 ) {
+                        commandIndex = 0;
+                        enteredCommands.unshift(command);
+                    }
                 }
             });
         </script>
