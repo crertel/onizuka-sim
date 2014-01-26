@@ -20,20 +20,27 @@
         </div>
 
         <script>
-            var sock = new SockJS('http://localhost:3000/console');
-            sock.onopen = function() { console.log('open'); };
-            sock.onmessage = function(e) {
-                console.log('message', e.data);
-                doMessage(JSON.stringify(e.data));
-            };
-            sock.onclose = function() {
-                console.log('close');
+            var sock;
+            function setupSocket() {
+                sock = new SockJS('http://localhost:3000/console');
+                sock.onopen = function() { console.log('open'); };
+                sock.onmessage = function(e) {
+                    doMessage(JSON.stringify(e.data));
+                };
+                sock.onclose = function() {
+                    console.log('close');
+                };
+                doMessage("Connecting...");
             };
 
             var $console = $("#console");
 
             var commands = {
-                clear: function() { $console.empty(); }
+                clear: function() { $console.empty(); },
+                reconnect: function() {
+                    sock.close();
+                    setupSocket();
+                }
             };
 
             var doCommand = function (input) {
@@ -43,6 +50,7 @@
                         return true;
                     }
                     catch(e) {
+                        console.log(e.toString());
                         return false;
                     }
                 }
@@ -61,8 +69,8 @@
             var doMessage = function ( input ) {                
                 $console.append( $("<div class='console-line message-input'> " + input + "</div>"));
                 $console.scrollTop($console[0].scrollHeight);
-
             };
+            setupSocket();
 
             var $cli = $("#cli");           
             var enteredCommands = [];

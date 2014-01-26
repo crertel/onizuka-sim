@@ -14,10 +14,14 @@ var nextMarkerID = 0;
 
 function startAssetPub() {
     var cameraAddress = "tcp://*"+":"+config.cameraServerPort;
-    log.log("Start camera message publication as %s...", config.cameraServerAddress);
+    log.log("Start camera message publication at " + cameraAddress);
     cameraPub = zmq.socket('pub');
     cameraPub.bind(cameraAddress);
     log.log("done.");
+
+    setInterval(function () {
+        cameraPub.send('{"t":"hrt", "st":"dub", "d":"dub"}');
+    }, 1000);
 
     setInterval(function(){
         var mtype = Math.random();

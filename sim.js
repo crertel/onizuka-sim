@@ -8,7 +8,7 @@ var log4js = require('log4js');
 var log = log4js.getLogger();
 
 
-//log.setLevel('INFO');
+log.setLevel('INFO');
 
 var messageDispatch = require('./messageDispatch');
 
@@ -103,7 +103,7 @@ function startMonitor(){
     monitorSocket = sockjs.createServer();
     monitorSocket.on('connection', function(conn) {
         operators.push(conn);
-        log.log("Operator joined.");
+        log.info("Operator joined.");
         conn.on('data', function(message) {
             log.info("Operator says %s", message);
             with(operatorCommands) {
