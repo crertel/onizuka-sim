@@ -11,7 +11,7 @@ function startAssetPub() {
     console.info("done.");
     setInterval(function(){
         var msg = { t: "asset", st:"add", d:Math.random()} ;
-        console.log("Sending message %s", msg);
+        console.log("Sending message %s", JSON.stringify(msg));
         assetPub.send(JSON.stringify(msg));
     },50);
 };

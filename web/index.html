@@ -1,0 +1,58 @@
+<html>
+    <head>
+        <title>Onizuka Sim Console</title>
+        <script src="sockjs-0.3.min.js"></script>
+        <script src="jquery-2.1.0.min.js"></script>
+
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <div class="main-pane">
+            <h1>Onizuka Sim Operator Conosle</h1>
+            <hr>        
+            <div class="message-pane" id="console">
+            </div>
+            <br>
+            <div class="command-line">
+                <textarea id="cli"> 
+                </textarea>
+            </div>
+        </div>
+
+        <script>
+            var sock = new SockJS('http://localhost:3000/console');
+            sock.onopen = function() { console.log('open'); };
+            sock.onmessage = function(e) {
+                console.log('message', e.data);
+                doMessage(JSON.stringify(e.data));
+            };
+            sock.onclose = function() {
+                console.log('close');
+            };
+
+            var $console = $("#console");
+            var doInput = function ( input ) {
+                $console.append( $("<div class='console-line cli-input'> " + input + "</div>"));
+                sock.send(input);
+                $console.scrollTop($console[0].scrollHeight);
+
+            };
+            var doMessage = function ( input ) {                
+                $console.append( $("<div class='console-line message-input'> " + input + "</div>"));
+                $console.scrollTop($console[0].scrollHeight);
+
+            };
+
+            var $cli = $("#cli");           
+
+            $cli.on("keyup", function(e) {
+                if (e.keyCode == '13') {
+                    doInput($cli.val().trim());
+                    $cli.val("");
+                }
+            });
+        </script>
+
+
+    </body>
+</html>

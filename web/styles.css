@@ -1,0 +1,54 @@
+body,html
+{
+    background-color: #222;
+    color: #ccc;
+}
+
+.main-pane
+{
+    width:960px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.command-line
+{
+    width: 100%;
+    padding: 10px;
+}
+
+.message-pane
+{
+    height: 500px;
+    width: 100%;
+    background-color: #000;
+    color: #3a3;
+    padding:10px;
+    overflow-y: scroll;
+}
+
+.console-line:hover
+{
+    background-color: #333;
+    color: #7f7;
+}
+
+.cli-input
+{
+    color:#4f4;
+}
+.message-input
+{
+    color:#f44;
+}
+
+.command-line textarea
+{
+    width: 100%;
+    display:block;
+    padding:0;
+    border-width:0;
+    background-color: #333;
+    color: #5d5;
+
+}
