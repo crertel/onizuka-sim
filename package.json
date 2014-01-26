@@ -9,6 +9,7 @@
     "zmq": "~2.6.0",
     "lodash": "~2.4.1",
     "sockjs": "~0.3.8",
+    "log4js": "~0.6.9"
   },
   "devDependencies": {},
   "scripts": {
