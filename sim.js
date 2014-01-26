@@ -4,7 +4,7 @@ var zmq = require('zmq');
 var sockjs = require("sockjs");
 var log4js = require('log4js');
 var log = log4js.getLogger();
-log.setLevel('WARN');
+log.setLevel('INFO');
 
 var assetSub;
 var webServer;
@@ -21,7 +21,9 @@ function startAssetSub() {
          var msgObjectString = JSON.stringify(msgObject);
          try {
              operators.forEach( function(conn) {
-                 conn.write(msgObjectString);
+                 if (conn.showMessages) {
+                     conn.write(msgObjectString);
+                 }
              });
          } catch (error) {
              log.warn("Unable to send to operator: ", error.toString());
@@ -40,6 +42,18 @@ function startAssetSub() {
 };
 
 var operators = [];
+var operatorCommands = {
+    showMessages: function () {
+        return function (conn) {
+            conn.showMessages = true;
+        }
+    },
+    hideMessages: function () {
+        return function (conn) {
+        conn.showMessages = false;
+        }
+    },
+};
 
 function startMonitor(){
     log.info("Starting monitor...");
@@ -49,6 +63,14 @@ function startMonitor(){
         log.log("Operator joined.");
         conn.on('data', function(message) {
             log.info("Operator says %s", message);
+            with(operatorCommands) {
+                try {
+                    var command = eval(message);
+                    command(conn);
+                } catch (e) {
+                    log.warn("Unrecognized command %s", message);
+                }
+            }
         });
         conn.on('close', function () {
             var opIndex;

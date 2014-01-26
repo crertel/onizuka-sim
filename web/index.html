@@ -31,9 +31,30 @@
             };
 
             var $console = $("#console");
+
+            var commands = {
+                clear: function() { $console.empty(); }
+            };
+
+            var doCommand = function (input) {
+                with (commands) {
+                    try {
+                        eval(input);
+                        return true;
+                    }
+                    catch(e) {
+                        return false;
+                    }
+                }
+                return false;
+            };
+
             var doInput = function ( input ) {
                 $console.append( $("<div class='console-line cli-input'> " + input + "</div>"));
-                sock.send(input);
+                // try to interpret the command... if not, pass to server
+                if (doCommand(input) == false) {
+                    sock.send(input);
+                }
                 $console.scrollTop($console[0].scrollHeight);
 
             };
