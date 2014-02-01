@@ -5,10 +5,10 @@ var express = require('express');
 var zmq = require('zmq');
 var sockjs = require("sockjs");
 var log4js = require('log4js');
-var log = log4js.getLogger();
+var log = log4js.getLogger("sim");
 
 
-log.setLevel('WARN');
+log.setLevel('INFO');
 
 var messageDispatch = require('./messageDispatch');
 
@@ -76,6 +76,12 @@ var operatorCommands = {
     hideMessages: function () {
         return function (conn) {
         conn.showMessages = false;
+        }
+    },
+
+    injectMessage: function(msg) {
+        return function (conn) {
+            handleMessageText(msg);    
         }
     },
 

@@ -1,5 +1,5 @@
 var log4js = require('log4js');
-var log = log4js.getLogger();
+var log = log4js.getLogger("message-dispatch");
 
 
 function handleCameraMessage( message ) {
