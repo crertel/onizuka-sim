@@ -98,6 +98,7 @@ function startMonitor(){
     monitorSocket.on('connection', function(conn) {
         operators.push(conn);
         log.info("Operator joined.");
+        conn.write(config.operatorMotd || "Welcome!");
         conn.on('data', function(message) {
             log.info("Operator says %s", message);
             with(operatorCommands) {
@@ -105,6 +106,7 @@ function startMonitor(){
                     var command = eval(message);
                     command(conn);
                 } catch (e) {
+                    conn.write("Unrecognized command " + message);
                     log.warn("Unrecognized command %s", message);
                 }
             }

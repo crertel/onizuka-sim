@@ -1,6 +1,7 @@
 var config = {};
 
 config.motd = "Hello, world!";
+config.operatorMotd = "Welcome to the Onizuka Asset Sim! Server started up at: " + (new Date()).toString();
 config.version = "0.1.0";
 config.webPort = 3000;
 

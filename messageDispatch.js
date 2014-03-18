@@ -1,6 +1,7 @@
 var log4js = require('log4js');
 var log = log4js.getLogger("message-dispatch");
 
+log.setLevel("info");
 
 function handleCameraMessage( message ) {
     log.debug("Got camera message:\n%s", JSON.stringify(message) );
