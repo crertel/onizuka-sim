@@ -1,4 +1,4 @@
-var config = require("./simConfig.js");
+var config = require("./simConfig.json");
 
 var path = require('path');
 var express = require('express');

@@ -1,0 +1,9 @@
+{
+    "motd": "Hello, world!",
+    "operatorMotd":  "Welcome to the Onizuka Asset Sim!",
+    "version": "0.1.0",
+    "webPort": 3000,
+    "assetServerAddress": "localhost",
+    "assetServerPort": 4001,
+    "cameraListenPort": 4002
+}
