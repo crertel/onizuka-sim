@@ -75,6 +75,8 @@ var operatorCommands = {
             conn.write("\thideMessages() -- Disables snooping of system messages.\n");
             conn.write("\tinjectMessages( <msg> ) -- Injects into messaging fabric a given message.\n");
             conn.write("\trunScript( <filename> ) -- Executes a script from the server.\n");
+            conn.write("\tsay( <message> ) -- Says a messsage to other ops.\n");
+            conn.write("\tsetName( <new name> ) -- Sets op name to new name.\n");
         }
     },
     showMessages: function () {
@@ -97,6 +99,25 @@ var operatorCommands = {
     runScript: function (filename) {
         return function (conn) {
             runScriptFromFile(filename);
+        }
+    },
+
+    say : function (message) {
+        return function (conn) {
+            log.info("Operator " + conn.opName + " says: " + message);
+            operators.forEach( function(op) {
+                op.write("Operator "+ conn.opName +" says: "+ message);
+            });
+        }
+    },
+
+    setName : function (newName) {
+        return function (conn) {
+            log.info("Operator "+ conn.opName +" now known as "+ newName);
+            operators.forEach( function(op) {
+                op.write("Operator "+ conn.opName +" now known as "+ newName);
+            });
+            conn.opName = newName;
         }
     }
 };
