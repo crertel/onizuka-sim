@@ -68,6 +68,15 @@ function startCameraPull() {
 
 var operators = [];
 var operatorCommands = {
+    help: function() {
+        return function (conn) {
+            conn.write("Operator commands:\n");
+            conn.write("\tshowMessages() -- Enables snooping of system messages.\n");
+            conn.write("\thideMessages() -- Disables snooping of system messages.\n");
+            conn.write("\tinjectMessages( <msg> ) -- Injects into messaging fabric a given message.\n");
+            conn.write("\trunScript( <filename> ) -- Executes a script from the server.\n");
+        }
+    },
     showMessages: function () {
         return function (conn) {
             conn.showMessages = true;
